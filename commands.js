@@ -104,7 +104,7 @@ module.exports = {
          * There are big differences between a user and a member
          */
         member
-          .voice.setMute(member.voice.mute ? false : true)
+          .voice.setMute(!member.voice.mute)
           .then(() => {
             // We let the message author know we were able to mute the person
             msg.reply(member.voice.mute ?
