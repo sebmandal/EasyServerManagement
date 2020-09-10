@@ -21,7 +21,7 @@ module.exports = {
          * There are big differences between a user and a member
          */
         member
-          .kick("Optional reason that will display in the audit logs")
+          .kick()
           .then(() => {
             // We let the message author know we were able to kick the person
             msg.reply(
@@ -57,23 +57,107 @@ module.exports = {
       // If the member is in the guild
       if (member) {
         /**
-         * Kick the member
+         * Ban the member
          * Make sure you run this on a member, not a user!
          * There are big differences between a user and a member
          */
         member
-          .ban("Optional reason that will display in the audit logs")
+          .ban()
           .then(() => {
-            // We let the message author know we were able to kick the person
+            // We let the message author know we were able to ban the person
             msg.reply(
               `Successfully banned @${user.username}.`
             );
           })
           .catch((err) => {
             // An error happened
-            // This is generally due to the bot not being able to kick the member,
+            // This is generally due to the bot not being able to ban the member,
             // either due to missing permissions or role hierarchy
             msg.reply("I was unable to ban the member");
+            // Log the error
+            console.error(err);
+          });
+      } else {
+        // The mentioned user isn't in this guild
+        msg.reply("That user isn't in this guild!");
+      }
+      // Otherwise, if no user was mentioned
+    } else {
+      msg.reply("You didn't mention a user or the mentioned user is invalid!");
+    }
+  },
+
+  mute: (msg) => {
+    const user = msg.mentions.users.first();
+    var args = msg.content.slice(9).split('; ');
+
+    // If we have a user mentioned
+    if (user) {
+      // Now we get the member from the user
+      const member = msg.guild.member(user);
+
+      // If the member is in the guild
+      if (member) {
+        /**
+         * Mute the member
+         * Make sure you run this on a member, not a user!
+         * There are big differences between a user and a member
+         */
+        member
+          .voice.setMute(member.voice.mute ? false : true)
+          .then(() => {
+            // We let the message author know we were able to mute the person
+            msg.reply(member.voice.mute ?
+              `Successfully muted @${user.username}.` : `Successfully unmuted @${user.username}.`
+            );
+          })
+          .catch((err) => {
+            // An error happened
+            // This is generally due to the bot not being able to mute the member,
+            // either due to missing permissions or role hierarchy
+            msg.reply("I was unable to mute the member");
+            // Log the error
+            console.error(err);
+          });
+      } else {
+        // The mentioned user isn't in this guild
+        msg.reply("That user isn't in this guild!");
+      }
+      // Otherwise, if no user was mentioned
+    } else {
+      msg.reply("You didn't mention a user or the mentioned user is invalid!");
+    }
+  },
+
+  unmute: (msg) => {
+    const user = msg.mentions.users.first();
+    var args = msg.content.slice(9).split('; ');
+
+    // If we have a user mentioned
+    if (user) {
+      // Now we get the member from the user
+      const member = msg.guild.member(user);
+
+      // If the member is in the guild
+      if (member) {
+        /**
+         * Mute the member
+         * Make sure you run this on a member, not a user!
+         * There are big differences between a user and a member
+         */
+        member
+          .voice.setMute(false)
+          .then(() => {
+            // We let the message author know we were able to mute the person
+            msg.reply(
+              `Successfully muted @${user.username}.`
+            );
+          })
+          .catch((err) => {
+            // An error happened
+            // This is generally due to the bot not being able to mute the member,
+            // either due to missing permissions or role hierarchy
+            msg.reply("I was unable to mute the member");
             // Log the error
             console.error(err);
           });
