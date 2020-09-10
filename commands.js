@@ -181,6 +181,32 @@ module.exports = {
     }
   },
 
+  createchannel: (msg) => {
+    var args = msg.content.slice(15).split('; ');
+
+    if (args.length != 2) {
+      msg.channel.send(new MessageEmbed()
+        .setTitle('Usage')
+        .setDescription(
+          '`!createchannel <name>; <text/voice/category>;`' + '\n\n' +
+          '`> name           ` String. Can have spaces.' + '\n' +
+          '`> type           ` String. text/voice/category' + '\n' +
+          '' + '\n' +
+          'Thanks to @tycrek for this awesome embed.'
+        ));
+    } else {
+      // Create a new text channel
+      console.log('args 0 = ' + args[0]);
+      console.log('args 1 = ' + args[1]);
+      // Create a new text channel
+      msg.guild.channels.create(args[0], {
+          type: args[1]
+        })
+        .then(console.log)
+        .catch(console.error);
+    }
+  },
+
   send: (msg) => {
     var message = msg.content.slice(6);
     var args = msg.content.split(' ');
@@ -249,5 +275,11 @@ module.exports = {
 /* OUTTAKES
 
 nothing right now
+
+*/
+
+/* TODO
+
+Add invite command.
 
 */
