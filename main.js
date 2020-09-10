@@ -39,18 +39,26 @@ client.on("message", (msg) => {
     msg.channel.type === "dm" ||
     msg.author.bot ||
     !msg.member.hasPermission("ADMINISTRATOR")
-  )
-    return;
+  ) {
+    if (msg.content.startsWith(prefix)) {
+      if (!msg.member.hasPermission("ADMINISTRATOR")) {
+        msg.reply('Unable to send command. You are not an administrator.');
+      }
+      return;
+    }
+  }
+
   try {
-    // this is the command processor, it will go through all of my commands and look for a match (a matching command after prefix)
+    // this is the command processor, it will go through all of my commands and look for a match
     commands[
       Object.keys(commands).find(
         (key) => msg.content.trim().substr(1).split(/ +/)[0] === key
       )
     ](msg);
   } catch (err) {
-    !(err instanceof TypeError) && console.log(err);
-  } // to log errors.
+    return; // this is here temporarily
+    // !(err instanceof TypeError) && log(err);
+  }
 });
 
 // to write and read json, currently using for admin permissions
