@@ -41,9 +41,11 @@ client.on("message", (msg) => {
     !msg.member.hasPermission("ADMINISTRATOR")
   ) {
     if (msg.content.startsWith(prefix)) {
-      if (!msg.member.hasPermission("ADMINISTRATOR")) {
-        msg.reply('Unable to send command. You are not an administrator.');
-        return;
+      if (command != "help") {
+        if (!msg.member.hasPermission("ADMINISTRATOR")) {
+          msg.reply('Unable to send command. You are not an administrator.');
+          return;
+        }
       }
     } else {
       return;

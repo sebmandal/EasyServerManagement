@@ -5,6 +5,48 @@ const {
 
 module.exports = {
 
+  mute: (msg) => {
+    const user = msg.mentions.users.first();
+    var args = msg.content.slice(9).split('; ');
+
+    // If we have a user mentioned
+    if (user) {
+      // Now we get the member from the user
+      const member = msg.guild.member(user);
+
+      // If the member is in the guild
+      if (member) {
+        /**
+         * Mute the member
+         * Make sure you run this on a member, not a user!
+         * There are big differences between a user and a member
+         */
+        member
+          .voice.setMute(!member.voice.mute)
+          .then(() => {
+            // We let the message author know we were able to mute the person
+            msg.reply(member.voice.mute ?
+              `Successfully muted @${user.username}.` : `Successfully unmuted @${user.username}.`
+            );
+          })
+          .catch((err) => {
+            // An error happened
+            // This is generally due to the bot not being able to mute the member,
+            // either due to missing permissions or role hierarchy
+            msg.reply("I was unable to mute the member");
+            // Log the error
+            console.error(err);
+          });
+      } else {
+        // The mentioned user isn't in this guild
+        msg.reply("That user isn't in this guild!");
+      }
+      // Otherwise, if no user was mentioned
+    } else {
+      msg.reply("You didn't mention a user or the mentioned user is invalid!");
+    }
+  },
+
   kick: (msg) => {
     const user = msg.mentions.users.first();
 
@@ -87,48 +129,6 @@ module.exports = {
     }
   },
 
-  mute: (msg) => {
-    const user = msg.mentions.users.first();
-    var args = msg.content.slice(9).split('; ');
-
-    // If we have a user mentioned
-    if (user) {
-      // Now we get the member from the user
-      const member = msg.guild.member(user);
-
-      // If the member is in the guild
-      if (member) {
-        /**
-         * Mute the member
-         * Make sure you run this on a member, not a user!
-         * There are big differences between a user and a member
-         */
-        member
-          .voice.setMute(!member.voice.mute)
-          .then(() => {
-            // We let the message author know we were able to mute the person
-            msg.reply(member.voice.mute ?
-              `Successfully muted @${user.username}.` : `Successfully unmuted @${user.username}.`
-            );
-          })
-          .catch((err) => {
-            // An error happened
-            // This is generally due to the bot not being able to mute the member,
-            // either due to missing permissions or role hierarchy
-            msg.reply("I was unable to mute the member");
-            // Log the error
-            console.error(err);
-          });
-      } else {
-        // The mentioned user isn't in this guild
-        msg.reply("That user isn't in this guild!");
-      }
-      // Otherwise, if no user was mentioned
-    } else {
-      msg.reply("You didn't mention a user or the mentioned user is invalid!");
-    }
-  },
-
   delete: (msg) => {
     const amount = parseInt(msg.content.slice(8));
 
@@ -141,17 +141,10 @@ module.exports = {
     }
   },
 
-  send: (msg) => {
-    var message = msg.content.slice(6);
-
-    msg.delete();
-    msg.channel.send(message);
-  },
-
-  cr: (msg) => {
+  createrole: (msg) => {
     var args = msg.content.slice(4).split('; ');
 
-    if (args.length < 4 || args.length > 4) {
+    if (args.length != 4) {
       msg.channel.send(new MessageEmbed()
         .setTitle('Usage')
         .setDescription(
@@ -176,7 +169,7 @@ module.exports = {
     }
   },
 
-  dr: (msg) => {
+  deleterole: (msg) => {
     var args = msg.content.slice(4).split('; ');
     const role = msg.mentions.roles.first();
 
@@ -185,6 +178,24 @@ module.exports = {
       msg.channel.send(`Deleted role ${role.name}.`);
     } else {
       msg.channel.send("You didn't enter a role!");
+    }
+  },
+
+  send: (msg) => {
+    var message = msg.content.slice(6);
+
+    if (args.length === 0) {
+      msg.channel.send(new MessageEmbed()
+        .setTitle('Usage')
+        .setDescription(
+          '`!send <message>`' + '\n\n' +
+          '`> message        ` String. Can have spaces.' + '\n' +
+          '' + '\n' +
+          'Thanks to @tycrek for this awesome embed.'
+        ));
+    } else {
+      msg.delete();
+      msg.channel.send(message);
     }
   },
 
@@ -235,6 +246,6 @@ module.exports = {
 
 /* OUTTAKES
 
-
+nothing right now
 
 */
