@@ -109,16 +109,49 @@ module.exports = {
   cr: (msg) => {
     var args = msg.content.slice(4).split('; ');
 
-    msg.reply('Name of role: ' + args[0]);
+    if (args.length < 4 || args.length > 4) {
+      msg.channel.send(new MessageEmbed()
+        .setTitle('Usage')
+        .setDescription(
+          '`!cr <name>; <color>; <permissions>; <mentionable>;`' + '\n\n' +
+          '`> name           ` String. Can have spaces.' + '\n' +
+          '`> color          ` Must be a [ColorResolvable](https://discord.js.org/#/docs/main/stable/typedef/ColorResolvable)' + '\n' +
+          '`> permissions    ` Must be `NONE` or a [PermissionResolvable](https://discord.js.org/#/docs/main/stable/typedef/PermissionResolvable)' + '\n' +
+          '`> mentionable    ` Boolean.' + '\n' +
+          '' + '\n' +
+          'Thanks to @tycrek for this awesome embed.'
+        ));
+    } else {
+      msg.guild.roles.create({
+        data: {
+          name: args[0],
+          color: args[1],
+          permissions: /\d/g.test(args[2]) ? parseInt(args[2]) : args[2],
+          mentionable: args[3] == 'true'
+        }
+      });
+      msg.reply('Created role ' + args[0]);
+    }
+  },
 
-    msg.guild.roles.create({
-      data: {
-        name: args[0],
-        color: args[1],
-        mentionable: args[2],
-        permissions: args[3]
-      }
-    });
+  dr: (msg) => {
+    var args = msg.content.slice(4).split('; ');
+    const role = msg.mentions.roles.first();
+
+    if (role) {
+      role.delete();
+      msg.channel.send(`Deleted role ${role.name}.`);
+    } else {
+      msg.channel.send("You didn't enter a role!");
+    }
+  },
+
+  source: (msg) => {
+    const source_embed = new MessageEmbed()
+      .setTitle("Source code")
+      .setURL("https://github.com/sebastianmandal/EasyServerManagement")
+      .setColor(0xff0000);
+    msg.channel.send(source_embed);
   },
 
   help: (msg) => {
