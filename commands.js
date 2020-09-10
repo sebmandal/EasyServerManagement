@@ -142,7 +142,7 @@ module.exports = {
   },
 
   createrole: (msg) => {
-    var args = msg.content.slice(4).split('; ');
+    var args = msg.content.slice(10).split('; ');
 
     if (args.length != 4) {
       msg.channel.send(new MessageEmbed()
@@ -170,7 +170,7 @@ module.exports = {
   },
 
   deleterole: (msg) => {
-    var args = msg.content.slice(4).split('; ');
+    var args = msg.content.slice(10).split('; ');
     const role = msg.mentions.roles.first();
 
     if (role) {
@@ -183,6 +183,8 @@ module.exports = {
 
   send: (msg) => {
     var message = msg.content.slice(6);
+    var args = msg.content.split(' ');
+    args.shift(); // to remove command part
 
     if (args.length === 0) {
       msg.channel.send(new MessageEmbed()
