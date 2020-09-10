@@ -1,0 +1,2 @@
+Commands.js 
+> (help command) Add comment on Object.keys(commands.length) and explain this is the most efficient way to show all commands.
