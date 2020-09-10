@@ -1,11 +1,7 @@
 /*jshint esversion: 9 */
 const {
-  Permissions,
-  Client,
   MessageEmbed
 } = require("discord.js");
-
-const adminPermissions = new Permissions('ADMINISTRATOR');
 
 module.exports = {
 
@@ -126,6 +122,7 @@ module.exports = {
       }, {
         name: "Commands",
         value: [
+          // this command is the most efficient way to display all of the commands, no need for manually adding commands
           Object.keys(commands).join('\n')
         ],
       }, {

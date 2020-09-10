@@ -34,6 +34,7 @@ client.on("message", (msg) => {
   const command = args.shift().toLowerCase();
 
   if (
+    // if the person is a bot, the command doesn't start with a prefix, the person doesn't have administrator right or it's a dm, it should return.
     !msg.content.startsWith(prefix) ||
     msg.channel.type === "dm" ||
     msg.author.bot ||
@@ -41,6 +42,7 @@ client.on("message", (msg) => {
   )
     return;
   try {
+    // this is the command processor, it will go through all of my commands and look for a match (a matching command after prefix)
     commands[
       Object.keys(commands).find(
         (key) => msg.content.trim().substr(1).split(/ +/)[0] === key
@@ -48,7 +50,7 @@ client.on("message", (msg) => {
     ](msg);
   } catch (err) {
     !(err instanceof TypeError) && console.log(err);
-  }
+  } // to log errors.
 });
 
 // to write and read json, currently using for admin permissions
