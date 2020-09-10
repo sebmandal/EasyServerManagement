@@ -99,6 +99,28 @@ module.exports = {
     }
   },
 
+  send: (msg) => {
+    var message = msg.content.slice(6);
+
+    msg.delete();
+    msg.channel.send(message);
+  },
+
+  cr: (msg) => {
+    var args = msg.content.slice(4).split('; ');
+
+    msg.reply('Name of role: ' + args[0]);
+
+    msg.guild.roles.create({
+      data: {
+        name: args[0],
+        color: args[1],
+        mentionable: args[2],
+        permissions: args[3]
+      }
+    });
+  },
+
   help: (msg) => {
     var commands = {
       ...require("./commands"),
@@ -135,3 +157,9 @@ module.exports = {
     msg.channel.send(help_embed);
   }
 };
+
+/* OUTTAKES
+
+
+
+*/
