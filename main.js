@@ -30,10 +30,14 @@ client.once("ready", () => {
 
 // Command processor
 client.on("message", (msg) => {
+  const args = msg.content.slice(prefix.length).split(/ +/);
+  const command = args.shift().toLowerCase();
+
   if (
     !msg.content.startsWith(prefix) ||
     msg.channel.type === "dm" ||
-    msg.author.bot
+    msg.author.bot ||
+    !msg.member.hasPermission("ADMINISTRATOR")
   )
     return;
   try {
@@ -43,7 +47,7 @@ client.on("message", (msg) => {
       )
     ](msg);
   } catch (err) {
-    !(err instanceof TypeError) && log.warn(err);
+    !(err instanceof TypeError) && console.log(err);
   }
 });
 
