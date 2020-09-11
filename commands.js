@@ -302,5 +302,7 @@ nothing right now
 /* TODO
 
 Add invite command.
+Add deletechannel command.
+Maybe add confirmation for deleting roles, channels, categories?
 
 */
