@@ -15,7 +15,7 @@ const {
 const YAML = require("yaml");
 
 // self explanatory
-const prefix = "!";
+const prefix = "?";
 var commands = {
   ...require("./commands"),
 };
@@ -23,7 +23,7 @@ var commands = {
 // just a simple log for when the bot goes online
 client.once("ready", () => {
   console.log("EasyServerManagement is ready!");
-  client.user.setActivity("!help", {
+  client.user.setActivity("?help", {
     type: "PLAYING",
   });
 });
@@ -58,7 +58,7 @@ client.on("message", (msg) => {
       Object.keys(commands).find(
         (key) => msg.content.trim().substr(1).split(/ +/)[0] === key
       )
-    ](msg);
+    ](msg, prefix);
   } catch (err) {
     return; // this is here temporarily
     // !(err instanceof TypeError) && log(err);

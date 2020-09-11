@@ -4,7 +4,7 @@ const {
 } = require("discord.js");
 
 module.exports = {
-  mute: (msg) => {
+  mute: (msg, prefix) => {
     const user = msg.mentions.users.first();
 
     // If we have a user mentioned
@@ -47,7 +47,7 @@ module.exports = {
     }
   },
 
-  kick: (msg) => {
+  kick: (msg, prefix) => {
     const user = msg.mentions.users.first();
 
     // If we have a user mentioned
@@ -86,7 +86,7 @@ module.exports = {
     }
   },
 
-  ban: (msg) => {
+  ban: (msg, prefix) => {
     const user = msg.mentions.users.first();
 
     // If we have a user mentioned
@@ -125,20 +125,22 @@ module.exports = {
     }
   },
 
-  purge: (msg) => {
-    const amount = parseInt(msg.content.slice(8));
+  purge: (msg, prefix) => {
+    const args = msg.content.split(' ');
+    var amount = parseInt(args[1]);
 
+    if (args.length != 2) {
+      msg.channel.send('!purge <amount>');
+    }
     if (amount > 99) {
       msg.channel.send("Cannot delete more than 99 messages at once.");
-    } else if (amount === 1) {
-      msg.channel.bulkDelete(2);
     } else {
       msg.channel.bulkDelete(amount + 1);
     }
   },
 
-  createrole: (msg) => {
-    var args = msg.content.slice(12).split("; ");
+  createrole: (msg, prefix) => {
+    var args = msg.content.slice(prefix.length + 10 + 1).split("; ");
 
     if (args.length != 4) {
       msg.channel.send(
@@ -173,7 +175,7 @@ module.exports = {
     }
   },
 
-  deleterole: (msg) => {
+  deleterole: (msg, prefix) => {
     const role = msg.mentions.roles.first();
 
     if (role) {
@@ -184,8 +186,8 @@ module.exports = {
     }
   },
 
-  createchannel: (msg) => {
-    var args = msg.content.slice(15).split("; ");
+  createchannel: (msg, prefix) => {
+    var args = msg.content.slice(prefix.length + 13 + 1).split("; ");
 
     if (args.length != 2) {
       msg.channel.send(
@@ -217,8 +219,8 @@ module.exports = {
     }
   },
 
-  send: (msg) => {
-    var message = msg.content.slice(6);
+  send: (msg, prefix) => {
+    var message = msg.content.slice(prefix.length + 4 + 1);
     var args = msg.content.split(" ");
     args.shift(); // to remove command part
 
@@ -242,7 +244,7 @@ module.exports = {
     }
   },
 
-  source: (msg) => {
+  source: (msg, prefix) => {
     const source_embed = new MessageEmbed()
       .setTitle("Source code")
       .setURL("https://github.com/sebastianmandal/EasyServerManagement")
@@ -250,7 +252,7 @@ module.exports = {
     msg.channel.send(source_embed);
   },
 
-  help: (msg) => {
+  help: (msg, prefix) => {
     var commands = {
       ...require("./commands"),
     };
@@ -269,7 +271,7 @@ module.exports = {
       )
       .addFields({
         name: "Prefix",
-        value: "> ! (exlamation)",
+        value: `${prefix}`,
       }, {
         name: "Commands",
         value: [
@@ -278,7 +280,7 @@ module.exports = {
         ],
       }, {
         name: "Example",
-        value: "> !help",
+        value: ` > ${prefix}help`,
       })
       .setTimestamp()
       .setFooter(
