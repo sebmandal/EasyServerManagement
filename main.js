@@ -68,5 +68,16 @@ client.on("message", (msg) => {
   }
 });
 
+// to write and read json, currently using for admin permissions
+function readJson(path) {
+  return fs.readJsonSync(filepath.join(__dirname, path));
+}
+
+function writeJson(path, json) {
+  return fs.writeJsonSync(filepath.join(__dirname, path), json, {
+    spaces: "\t",
+  });
+}
+
 // Joining the server
 client.login(readJson("token.json").token);
