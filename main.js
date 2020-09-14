@@ -4,6 +4,8 @@ const {
   MessageEmbed
 } = require("discord.js");
 
+const UsageEmbed = require('./UsageEmbed');
+
 const client = new Client();
 
 // To use my json parser. I have my token stored in auth.json, so it would be harder (if it's even possible) to crack my token

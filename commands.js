@@ -4,6 +4,8 @@ const {
   Client
 } = require("discord.js");
 
+const UsageEmbed = require('../UsageEmbed');
+
 const client = new Client();
 
 module.exports = {
