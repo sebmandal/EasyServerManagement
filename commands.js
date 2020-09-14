@@ -1,7 +1,10 @@
 /*jshint esversion: 9 */
 const {
-  MessageEmbed
+  MessageEmbed,
+  Client
 } = require("discord.js");
+
+const client = new Client();
 
 module.exports = {
   mute: (msg, prefix) => {
@@ -33,7 +36,7 @@ module.exports = {
             // An error happened
             // This is generally due to the bot not being able to mute the member,
             // either due to missing permissions or role hierarchy
-            msg.reply("I was unable to mute the member");
+            msg.reply("I was unable to mute the member or user is not in voice chat.");
             // Log the error
             console.error(err);
           });
@@ -47,40 +50,58 @@ module.exports = {
     }
   },
 
-  kick: (msg, prefix) => {
+  deaf: (msg, prefix) => {
     const user = msg.mentions.users.first();
 
-    // If we have a user mentioned
     if (user) {
-      // Now we get the member from the user
       const member = msg.guild.member(user);
+      console.log('Fetched user');
 
-      // If the member is in the guild
       if (member) {
-        /**
-         * Kick the member
-         * Make sure you run this on a member, not a user!
-         * There are big differences between a user and a member
-         */
-        member
-          .kick()
+        console.log('Fetched member');
+        console.log(member.voice.deaf);
+        member.voice
+          .setDeaf(!member.voice.deaf)
           .then(() => {
-            // We let the message author know we were able to kick the person
-            msg.reply(`Successfully kicked @${user.username}.`);
+            msg.reply(
+              member.voice.mute ?
+              `Successfully deafened @${user.username}.` :
+              `Successfully undeafened @${user.username}.`
+            );
+            console.log('Deafened member');
           })
           .catch((err) => {
-            // An error happened
-            // This is generally due to the bot not being able to kick the member,
-            // either due to missing permissions or role hierarchy
-            msg.reply("I was unable to kick the member");
-            // Log the error
+            msg.reply("I was unable to deafen the member or user is not in voice chat.");
             console.error(err);
           });
       } else {
-        // The mentioned user isn't in this guild
+        msg.reply("That user isn't in this guild!");
+
+      }
+    } else {
+      msg.reply("You didn't mention a user or the mentioned user is invalid!");
+    }
+  },
+
+  kick: (msg, prefix) => {
+    const user = msg.mentions.users.first();
+
+    if (user) {
+      const member = msg.guild.member(user);
+
+      if (member) {
+        member
+          .kick()
+          .then(() => {
+            msg.reply(`Successfully kicked ${user}.`);
+          })
+          .catch((err) => {
+            msg.reply("I was unable to kick the member");
+            console.error(err);
+          });
+      } else {
         msg.reply("That user isn't in this guild!");
       }
-      // Otherwise, if no user was mentioned
     } else {
       msg.reply("You didn't mention a user or the mentioned user is invalid!");
     }
@@ -147,7 +168,7 @@ module.exports = {
         new MessageEmbed()
         .setTitle("Usage")
         .setDescription(
-          "`!cr <name>; <color>; <permissions>; <mentionable>;`" +
+          prefix + "createrole <name>; <color>; <permissions>; <mentionable>;" +
           "\n\n" +
           "`> name           ` String. Can have spaces." +
           "\n" +
@@ -189,16 +210,18 @@ module.exports = {
   createchannel: (msg, prefix) => {
     var args = msg.content.slice(prefix.length + 13 + 1).split("; ");
 
-    if (args.length != 2) {
+    if (args.length != 3) {
       msg.channel.send(
         new MessageEmbed()
         .setTitle("Usage")
         .setDescription(
-          "`!createchannel <name>; <text/voice/category>;`" +
+          prefix + "createchannel <name>; <text/voice/category>;" +
           "\n\n" +
           "`> name           ` String. Can have spaces." +
           "\n" +
           "`> type           ` String. text/voice/category" +
+          "\n" +
+          "`> category       ` Number. No spaces. Category ID. Leave empty for no category." +
           "\n" +
           "" +
           "\n" +
@@ -207,16 +230,25 @@ module.exports = {
       );
     } else {
       // Create a new text channel
-      console.log("args 0 = " + args[0]);
-      console.log("args 1 = " + args[1]);
-      // Create a new text channel
       msg.guild.channels
         .create(args[0], {
-          type: args[1],
+          type: args[1]
         })
-        .then(console.log)
+        .then(channel => {
+          channel.setParent(args[2]);
+          msg.channel.send('Channel creation executed successfully.');
+        })
         .catch(console.error);
     }
+  },
+
+  deletechannel: (msg, prefix) => {
+    let args = msg.content.slice(prefix.length).trim().split(/ +/);
+    args.shift(); // remove command from message to just get args
+
+    msg.guild.channels.resolve(args[0]).delete()
+      .then(msg.channel.send('Deleted.'))
+      .catch(console.error);
   },
 
   send: (msg, prefix) => {
@@ -229,7 +261,7 @@ module.exports = {
         new MessageEmbed()
         .setTitle("Usage")
         .setDescription(
-          "`!send <message>`" +
+          prefix + "send <message>" +
           "\n\n" +
           "`> message        ` String. Can have spaces." +
           "\n" +
@@ -288,7 +320,7 @@ module.exports = {
       );
 
     msg.channel.send(help_embed);
-  },
+  }
 };
 
 /* OUTTAKES

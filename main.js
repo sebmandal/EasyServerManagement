@@ -20,6 +20,9 @@ var commands = {
   ...require("./commands"),
 };
 
+// silenced channels
+var SILENCED = [];
+
 // just a simple log for when the bot goes online
 client.once("ready", () => {
   console.log("EasyServerManagement is ready!");
@@ -37,13 +40,13 @@ client.on("message", (msg) => {
     // if the person is a bot, the command doesn't start with a prefix, the person doesn't have administrator right or it's a dm, it should return.
     !msg.content.startsWith(prefix) ||
     msg.channel.type === "dm" ||
-    msg.author.bot ||
-    !msg.member.hasPermission("ADMINISTRATOR")
+    msg.author.bot // ||
+    // !msg.member.hasPermission("ADMINISTRATOR")
   ) {
     if (msg.content.startsWith(prefix)) {
       if (command != "help") {
         if (!msg.member.hasPermission("ADMINISTRATOR")) {
-          msg.reply('Unable to send command. You are not an administrator.');
+          msg.reply("Unable to send command. You are not an administrator.");
           return;
         }
       }
@@ -64,17 +67,6 @@ client.on("message", (msg) => {
     // !(err instanceof TypeError) && log(err);
   }
 });
-
-// to write and read json, currently using for admin permissions
-function readJson(path) {
-  return fs.readJsonSync(filepath.join(__dirname, path));
-}
-
-function writeJson(path, json) {
-  return fs.writeJsonSync(filepath.join(__dirname, path), json, {
-    spaces: "\t",
-  });
-}
 
 // Joining the server
 client.login(readJson("token.json").token);
