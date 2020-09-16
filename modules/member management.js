@@ -4,7 +4,7 @@ const {
   Client
 } = require("discord.js");
 
-const UsageEmbed = require('../UsageEmbed');
+const UsageEmbed = require("./UsageEmbed");
 
 const client = new Client();
 
@@ -38,7 +38,9 @@ module.exports = {
             // An error happened
             // This is generally due to the bot not being able to mute the member,
             // either due to missing permissions or role hierarchy
-            msg.reply("I was unable to mute the member or user is not in voice chat.");
+            msg.reply(
+              "I was unable to mute the member or user is not in voice chat."
+            );
             // Log the error
             console.error(err);
           });
@@ -57,10 +59,10 @@ module.exports = {
 
     if (user) {
       const member = msg.guild.member(user);
-      console.log('Fetched user');
+      console.log("Fetched user");
 
       if (member) {
-        console.log('Fetched member');
+        console.log("Fetched member");
         console.log(member.voice.deaf);
         member.voice
           .setDeaf(!member.voice.deaf)
@@ -70,15 +72,16 @@ module.exports = {
               `Successfully deafened @${user.username}.` :
               `Successfully undeafened @${user.username}.`
             );
-            console.log('Deafened member');
+            console.log("Deafened member");
           })
           .catch((err) => {
-            msg.reply("I was unable to deafen the member or user is not in voice chat.");
+            msg.reply(
+              "I was unable to deafen the member or user is not in voice chat."
+            );
             console.error(err);
           });
       } else {
         msg.reply("That user isn't in this guild!");
-
       }
     } else {
       msg.reply("You didn't mention a user or the mentioned user is invalid!");
@@ -148,41 +151,22 @@ module.exports = {
     }
   },
 
-  purge: (msg, prefix) => {
-    const args = msg.content.split(' ');
-    var amount = parseInt(args[1]);
-
-    if (args.length != 2) {
-      msg.channel.send('!purge <amount>');
-    }
-    if (amount > 99) {
-      msg.channel.send("Cannot delete more than 99 messages at once.");
-    } else {
-      msg.channel.bulkDelete(amount + 1);
-    }
-  },
-
   createrole: (msg, prefix) => {
     var args = msg.content.slice(prefix.length + 10 + 1).split("; ");
 
     if (args.length != 4) {
       msg.channel.send(
-        new MessageEmbed()
-        .setTitle("Usage")
-        .setDescription(
-          prefix + "createrole <name>; <color>; <permissions>; <mentionable>;" +
-          "\n\n" +
-          "`> name           ` String. Can have spaces." +
-          "\n" +
-          "`> color          ` Must be a [ColorResolvable](https://discord.js.org/#/docs/main/stable/typedef/ColorResolvable)" +
-          "\n" +
-          "`> permissions    ` Must be `NONE` or a [PermissionResolvable](https://discord.js.org/#/docs/main/stable/typedef/PermissionResolvable)" +
-          "\n" +
-          "`> mentionable    ` Boolean." +
-          "\n" +
-          "" +
-          "\n" +
-          "Thanks to @tycrek for this awesome embed."
+        new UsageEmbed(
+          "createrole",
+          "; ",
+          false,
+          ["name", "color", "permissions", "mentionable"],
+          [
+            "String. Can have spaces.",
+            "Must be a [ColorResolvable](https://discord.js.org/#/docs/main/stable/typedef/ColorResolvable)",
+            "Must be `NONE` or a [PermissionResolvable](https://discord.js.org/#/docs/main/stable/typedef/PermissionResolvable)",
+            "Boolean",
+          ]
         )
       );
     } else {
@@ -209,132 +193,59 @@ module.exports = {
     }
   },
 
-  createchannel: (msg, prefix) => {
-    var args = msg.content.slice(prefix.length + 13 + 1).split("; ");
+  create: (msg, prefix) => {
+    let command = "create";
+    let args = msg.content
+      .slice(prefix.length + command.length + 1)
+      .split(/; +/);
+    console.log(args);
 
-    if (args.length != 3) {
+    if (args.length > 3 || args.length < 2) {
       msg.channel.send(
-        new MessageEmbed()
-        .setTitle("Usage")
-        .setDescription(
-          prefix + "createchannel <name>; <text/voice/category>;" +
-          "\n\n" +
-          "`> name           ` String. Can have spaces." +
-          "\n" +
-          "`> type           ` String. text/voice/category" +
-          "\n" +
-          "`> category       ` Number. No spaces. Category ID. Leave empty for no category." +
-          "\n" +
-          "" +
-          "\n" +
-          "Thanks to @tycrek for this awesome embed."
+        new UsageEmbed(
+          "create",
+          " ",
+          false,
+          ["name", "type", "category"],
+          [
+            "String. Can have spaces.",
+            "String. text/voice/category",
+            "Number. No spaces. Category ID. Leave empty for no category.",
+          ],
+          (notes = ["if type is category, leave category ID blank"])
         )
       );
+    } else if (args.length === 2) {
+      msg.guild.channels
+        .create(args[0], {
+          type: args[1],
+        })
+        .then((channel) => {
+          msg.channel.send("Category/channel creation executed successfully.");
+        })
+        .catch(console.error);
     } else {
       // Create a new text channel
       msg.guild.channels
         .create(args[0], {
-          type: args[1]
+          type: args[1],
         })
-        .then(channel => {
+        .then((channel) => {
           channel.setParent(args[2]);
-          msg.channel.send('Channel creation executed successfully.');
+          msg.channel.send("Category/channel creation executed successfully.");
         })
         .catch(console.error);
     }
   },
 
-  deletechannel: (msg, prefix) => {
+  delete: (msg, prefix) => {
     let args = msg.content.slice(prefix.length).trim().split(/ +/);
     args.shift(); // remove command from message to just get args
 
-    msg.guild.channels.resolve(args[0]).delete()
-      .then(msg.channel.send('Deleted.'))
+    msg.guild.channels
+      .resolve(args[0])
+      .delete()
+      .then(msg.channel.send("Deleted."))
       .catch(console.error);
   },
-
-  send: (msg, prefix) => {
-    var message = msg.content.slice(prefix.length + 4 + 1);
-    var args = msg.content.split(" ");
-    args.shift(); // to remove command part
-
-    if (args.length === 0) {
-      msg.channel.send(
-        new MessageEmbed()
-        .setTitle("Usage")
-        .setDescription(
-          prefix + "send <message>" +
-          "\n\n" +
-          "`> message        ` String. Can have spaces." +
-          "\n" +
-          "" +
-          "\n" +
-          "Thanks to @tycrek for this awesome embed."
-        )
-      );
-    } else {
-      msg.delete();
-      msg.channel.send(message);
-    }
-  },
-
-  source: (msg, prefix) => {
-    const source_embed = new MessageEmbed()
-      .setTitle("Source code")
-      .setURL("https://github.com/sebastianmandal/EasyServerManagement")
-      .setColor(0xff0000);
-    msg.channel.send(source_embed);
-  },
-
-  help: (msg, prefix) => {
-    var commands = {
-      ...require("./commands"),
-    };
-    // Sends embed containing Github, personal info, commands for bot, example, prefix, etc. in chat.
-    const help_embed = new MessageEmbed()
-      .setColor("#0099ff")
-      .setTitle("Sebastian Mandal > EasyServerManagement")
-      .setDescription(
-        "Click the link above to get redirected to my personal Github!"
-      )
-      .setURL("https://github.com/sebastianmandal/easyservermanagement")
-      .setAuthor(
-        "Sebastian Mandal",
-        "https://i.imgur.com/PHqQPNm.jpg",
-        "https://github.com/sebastianmandal"
-      )
-      .addFields({
-        name: "Prefix",
-        value: `${prefix}`,
-      }, {
-        name: "Commands",
-        value: [
-          // this command is the most efficient way to display all of the commands, no need for manually adding commands
-          Object.keys(commands).join("\n"),
-        ],
-      }, {
-        name: "Example",
-        value: ` > ${prefix}help`,
-      })
-      .setTimestamp()
-      .setFooter(
-        'Discord bot "EasyServerManagement", made by Sebastian Mandal.'
-      );
-
-    msg.channel.send(help_embed);
-  }
-};
-
-/* OUTTAKES
-
-nothing right now
-
-*/
-
-/* TODO
-
-Add invite command.
-Add deletechannel command.
-Maybe add confirmation for deleting roles, channels, categories?
-
-*/
+}

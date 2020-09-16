@@ -23,22 +23,18 @@ class UsageEmbed extends MessageEmbed {
    * @param {string[]} notes Notes/tips on using the command (can be null)
    */
   constructor(command, separator, wrap, parameters, descriptions, notes = null) {
-    let prefix = require('./bot').prefix; // * Copy/pasting? This line may be different for you
+    let prefix = require('./main').prefix; // * Copy/pasting? This line may be different for you
     super({
       title: `Usage`,
       description: (
         //! STEP 1: First line
-        (`\`${prefix}${command} ${wrap ? separator.split('').shift() : ''}${parameters.join(separator)}${wrap ? separator.split('').pop() : ''}\``)
-
-        +
+        (`\`${prefix}${command} ${wrap ? separator.split('').shift() : ''}${parameters.join(separator)}${wrap ? separator.split('').pop() : ''}\``) +
         newLine +
 
         //! STEP 2: Parameter text
         (['**Parameters**'].concat(parameters.map((param) =>
           `\`${(paramLead + param).padEnd(parameters.reduce((a, b) =>
-						a.length > b.length ? a : b).length + paramLead.length + (' '.length * 4))}\` ${descriptions[parameters.indexOf(param)]}`)).join('\n'))
-
-        +
+						a.length > b.length ? a : b).length + paramLead.length + (' '.length * 4))}\` ${descriptions[parameters.indexOf(param)]}`)).join('\n')) +
         newLine +
 
         //! STEP 3: Notes

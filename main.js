@@ -4,7 +4,7 @@ const {
   MessageEmbed
 } = require("discord.js");
 
-const UsageEmbed = require('./UsageEmbed');
+const UsageEmbed = require('./modules/UsageEmbed');
 
 const client = new Client();
 
@@ -19,7 +19,10 @@ const YAML = require("yaml");
 // self explanatory
 const prefix = "?";
 var commands = {
-  ...require("./commands"),
+  ...require("./modules/guild management"),
+  ...require("./modules/member management"),
+  ...require("./modules/info"),
+  ...require("./modules/fun")
 };
 
 // silenced channels
@@ -42,8 +45,8 @@ client.on("message", (msg) => {
     // if the person is a bot, the command doesn't start with a prefix, the person doesn't have administrator right or it's a dm, it should return.
     !msg.content.startsWith(prefix) ||
     msg.channel.type === "dm" ||
-    msg.author.bot // ||
-    // !msg.member.hasPermission("ADMINISTRATOR")
+    msg.author.bot ||
+    !msg.member.hasPermission("ADMINISTRATOR")
   ) {
     if (msg.content.startsWith(prefix)) {
       if (command != "help") {
@@ -83,3 +86,7 @@ function writeJson(path, json) {
 
 // Joining the server
 client.login(readJson("token.json").token);
+
+module.exports = {
+  prefix: prefix
+};
