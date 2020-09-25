@@ -248,4 +248,4 @@ module.exports = {
       .then(msg.channel.send("Deleted."))
       .catch(console.error);
   },
-}
+};

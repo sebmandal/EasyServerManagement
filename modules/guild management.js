@@ -54,42 +54,49 @@ module.exports = {
 			.slice(prefix.length + command.length + 1)
 			.split(/; +/);
 		console.log(args);
+		console.log(args.length);
 
-		if (args.length > 3 || args.length < 2) {
-			msg.channel.send(
-				new UsageEmbed(
-					"create",
-					" ",
-					false,
-					["name", "type", "category"],
-					[
-						"String. Can have spaces.",
-						"String. text/voice/category",
-						"Number. No spaces. Category ID. Leave empty for no category.",
-					],
-					(notes = ["if type is category, leave category ID blank"])
-				)
-			);
-		} else if (args.length === 2) {
-			msg.guild.channels
-				.create(args[0], {
-					type: args[1],
-				})
-				.then((channel) => {
-					msg.channel.send("Category/channel creation executed successfully.");
-				})
-				.catch(console.error);
-		} else {
-			// Create a new text channel
-			msg.guild.channels
-				.create(args[0], {
-					type: args[1],
-				})
-				.then((channel) => {
-					channel.setParent(args[2]);
-					msg.channel.send("Category/channel creation executed successfully.");
-				})
-				.catch(console.error);
+		if (args.length != 3) {
+			if (args.length != 2) {
+				msg.channel.send(
+					new UsageEmbed(
+						"create",
+						" ",
+						false,
+						["name", "type", "category"],
+						[
+							"String. Can have spaces.",
+							"String. text/voice/category",
+							"Number. No spaces. Category ID. Leave empty for no category.",
+						],
+						(notes = ["if type is category, leave category ID blank"])
+					)
+				);
+			} else if (args.length === 2) {
+				msg.guild.channels
+					.create(args[0], {
+						type: args[1],
+					})
+					.then((channel) => {
+						msg.channel.send(
+							"Category/channel creation executed successfully."
+						);
+					})
+					.catch(console.error);
+			} else {
+				// Create a new text channel
+				msg.guild.channels
+					.create(args[0], {
+						type: args[1],
+					})
+					.then((channel) => {
+						channel.setParent(args[2]);
+						msg.channel.send(
+							"Category/channel creation executed successfully."
+						);
+					})
+					.catch(console.error);
+			}
 		}
 	},
 
