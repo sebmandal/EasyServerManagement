@@ -6,7 +6,7 @@ const UsageEmbed = require("./UsageEmbed");
 const client = new Client();
 
 module.exports = {
-	createrole: (msg, prefix) => {
+  createrole: (msg, prefix) => {
 		var args = msg.content.slice(prefix.length + 10 + 1).split("; ");
 
 		if (args.length != 4) {
@@ -36,7 +36,6 @@ module.exports = {
 			msg.reply("Created role " + args[0]);
 		}
 	},
-
 	deleterole: (msg, prefix) => {
 		const role = msg.mentions.roles.first();
 
@@ -47,7 +46,6 @@ module.exports = {
 			msg.channel.send("You didn't enter a role!");
 		}
 	},
-
 	create: (msg, prefix) => {
 		let command = "create";
 		let args = msg.content
@@ -110,7 +108,6 @@ module.exports = {
 			.then(msg.channel.send("Deleted."))
 			.catch(console.error);
 	},
-
 	purge: (msg, prefix) => {
 		const args = msg.content.split(" ");
 		var amount = parseInt(args[1]);
@@ -124,5 +121,5 @@ module.exports = {
 		} else {
 			msg.channel.bulkDelete(amount + 1);
 		}
-	},
+  }
 };

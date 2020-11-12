@@ -1,4 +1,5 @@
 /*jshint esversion: 9 */
+
 const {
   Client,
   MessageEmbed
@@ -85,7 +86,11 @@ function writeJson(path, json) {
 }
 
 // Joining the server
-client.login(readJson("token.json").token);
+token = {
+  ...require('./token')
+}
+
+client.login(token.token);
 
 module.exports = {
   prefix: prefix

@@ -104,7 +104,7 @@ dist
 .tern-port
 
 # auth
-token.json
+token.js
 
 # macOS folder thing
 .DS_STORE
