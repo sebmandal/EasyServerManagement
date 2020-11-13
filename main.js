@@ -18,7 +18,7 @@ const {
 const YAML = require("yaml");
 
 // self explanatory
-const prefix = "?";
+var prefix = "?";
 var commands = {
   ...require("./modules/guild management"),
   ...require("./modules/member management"),
