@@ -4,26 +4,26 @@ const {
   Client
 } = require("discord.js");
 
-const UsageEmbed = require("./UsageEmbed");
-
 const client = new Client();
 
 module.exports = {
+  remindme: (msg, prefix) => {
+    var message = msg.content.slice(prefix.length + 8 + 1);
+    var args = msg.content.split(" ");
+
+    var link = args;
+
+    console.log(link);
+
+    message.author.send(`${link[1]}`);
+  },
   send: (msg, prefix) => {
     var message = msg.content.slice(prefix.length + 4 + 1);
     var args = msg.content.split(" ");
     args.shift(); // to remove command part
 
     if (args.length === 0) {
-      return msg.channel.send(
-        new UsageEmbed(
-          "send",
-          "",
-          false,
-          ["message"],
-          ["String, can have spaces."]
-        )
-      );
+      return;
     } else {
       msg.delete();
       msg.channel.send(message);
@@ -53,21 +53,6 @@ module.exports = {
   steal: (msg, prefix) => {
     const args = msg.content.slice(prefix.length).trim().split(/ +/);
     args.shift(); // Remove command from args
-
-    if (args.length < 1)
-      return msg.channel.send(
-        new UsageEmbed(
-          "steal",
-          "",
-          false,
-          [":emoji:"],
-          ["Emoji to steal and add to current server"],
-          [
-            "To steal multiple emoji, separate each with a space",
-            "Both static and animated emoji can be stolen",
-          ]
-        )
-      );
 
     if (args.length > 5)
       return msg.reply("slow down, buckaroo! Only do 5 emoji at a time.");

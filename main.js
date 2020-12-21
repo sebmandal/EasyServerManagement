@@ -5,25 +5,18 @@ const {
   MessageEmbed
 } = require("discord.js");
 
-const UsageEmbed = require('./modules/UsageEmbed');
-
 const client = new Client();
 
 // To use my json parser. I have my token stored in auth.json, so it would be harder (if it's even possible) to crack my token
 const fs = require("fs-extra");
 const filepath = require("path");
-const {
-  clear
-} = require("console");
-const YAML = require("yaml");
 
 // self explanatory
 var prefix = "?";
 var commands = {
   ...require("./modules/guild management"),
   ...require("./modules/member management"),
-  ...require("./modules/info"),
-  ...require("./modules/fun")
+  ...require("./modules/info")
 };
 
 // silenced channels
@@ -39,6 +32,12 @@ client.once("ready", () => {
 
 // Command processor
 client.on("message", (msg) => {
+  if (!msg.author.bot) { 
+    if (msg.content.includes("iirc")) {
+      msg.channel.send("iirc = 'if I recall correctly' (you're welcome, future Seb)");
+    } 
+  }
+
   const args = msg.content.slice(prefix.length).split(/ +/);
   const command = args.shift().toLowerCase();
 
@@ -73,17 +72,6 @@ client.on("message", (msg) => {
     // !(err instanceof TypeError) && log(err);
   }
 });
-
-// to write and read json, currently using for admin permissions
-function readJson(path) {
-  return fs.readJsonSync(filepath.join(__dirname, path));
-}
-
-function writeJson(path, json) {
-  return fs.writeJsonSync(filepath.join(__dirname, path), json, {
-    spaces: "\t",
-  });
-}
 
 // Joining the server
 token = {

@@ -4,8 +4,6 @@ const {
   Client
 } = require("discord.js");
 
-const UsageEmbed = require("./UsageEmbed");
-
 const client = new Client();
 
 module.exports = {
@@ -57,9 +55,5 @@ module.exports = {
       );
 
     msg.channel.send(help_embed);
-  },
-
-  commands: (msg, prefix) => {
-
   }
 };

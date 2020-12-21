@@ -1,29 +1,19 @@
 /*jshint esversion: 9 */
 const { MessageEmbed, Client } = require("discord.js");
 
-const UsageEmbed = require("./UsageEmbed");
-
 const client = new Client();
 
 module.exports = {
+  eval: (msg, prefix) => {
+    var message = msg.content.slice(prefix.length + 4 + 1);
+    console.log(message)
+    eval(message)
+  },
   createrole: (msg, prefix) => {
 		var args = msg.content.slice(prefix.length + 10 + 1).split("; ");
 
 		if (args.length != 4) {
-			msg.channel.send(
-				new UsageEmbed(
-					"createrole",
-					"; ",
-					false,
-					["name", "color", "permissions", "mentionable"],
-					[
-						"String. Can have spaces.",
-						"Must be a [ColorResolvable](https://discord.js.org/#/docs/main/stable/typedef/ColorResolvable)",
-						"Must be `NONE` or a [PermissionResolvable](https://discord.js.org/#/docs/main/stable/typedef/PermissionResolvable)",
-						"Boolean",
-					]
-				)
-			);
+			return;
 		} else {
 			msg.guild.roles.create({
 				data: {
@@ -56,20 +46,7 @@ module.exports = {
 
 		if (args.length != 3) {
 			if (args.length != 2) {
-				msg.channel.send(
-					new UsageEmbed(
-						"create",
-						" ",
-						false,
-						["name", "type", "category"],
-						[
-							"String. Can have spaces.",
-							"String. text/voice/category",
-							"Number. No spaces. Category ID. Leave empty for no category.",
-						],
-						(notes = ["if type is category, leave category ID blank"])
-					)
-				);
+				return;
 			} else if (args.length === 2) {
 				msg.guild.channels
 					.create(args[0], {
