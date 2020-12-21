@@ -18,15 +18,17 @@ module.exports = {
     message.author.send(`${link[1]}`);
   },
   send: (msg, prefix) => {
-    var message = msg.content.slice(prefix.length + 4 + 1);
     var args = msg.content.split(" ");
     args.shift(); // to remove command part
 
     if (args.length === 0) {
       return;
-    } else {
-      msg.delete();
+    } else if (args[0] === "here") {
+      var message = msg.content.slice(prefix.length + 4 + 1 + 4);
       msg.channel.send(message);
+    } else {
+      var message = msg.content.slice(prefix.length + 4 + 1 + args[0].length);
+      msg.guild.channels.cache.get(args[0]).send(message);
     }
   },
 

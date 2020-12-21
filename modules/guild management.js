@@ -6,8 +6,7 @@ const client = new Client();
 module.exports = {
   eval: (msg, prefix) => {
     var message = msg.content.slice(prefix.length + 4 + 1);
-    console.log(message)
-    eval(message)
+    eval(message).then(console.log('done')).err(log(err))
   },
   createrole: (msg, prefix) => {
 		var args = msg.content.slice(prefix.length + 10 + 1).split("; ");
@@ -19,7 +18,7 @@ module.exports = {
 				data: {
 					name: args[0],
 					color: args[1],
-					permissions: /\d/g.test(args[2]) ? parseInt(args[2]) : args[2],
+					permissions: parseInt(args[2]),
 					mentionable: args[3] == "true",
 				},
 			});
