@@ -7,16 +7,6 @@ const {
 const client = new Client();
 
 module.exports = {
-  remindme: (msg, prefix) => {
-    var message = msg.content.slice(prefix.length + 8 + 1);
-    var args = msg.content.split(" ");
-
-    var link = args;
-
-    console.log(link);
-
-    message.author.send(`${link[1]}`);
-  },
   send: (msg, prefix) => {
     var args = msg.content.split(" ");
     args.shift(); // to remove command part
@@ -26,9 +16,11 @@ module.exports = {
     } else if (args[0] === "here") {
       var message = msg.content.slice(prefix.length + 4 + 1 + 4);
       msg.channel.send(message);
+      msg.delete();
     } else {
       var message = msg.content.slice(prefix.length + 4 + 1 + args[0].length);
       msg.guild.channels.cache.get(args[0]).send(message);
+      msg.delete();
     }
   },
 
