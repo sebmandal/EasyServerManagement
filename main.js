@@ -16,7 +16,8 @@ var prefix = "?";
 var commands = {
   ...require("./modules/guild management"),
   ...require("./modules/member management"),
-  ...require("./modules/info")
+  ...require("./modules/info"),
+  ...require("./modules/fun")
 };
 
 // silenced channels
