@@ -24,25 +24,25 @@ module.exports = {
     }
   },
 
-  vote: (msg, prefix) => {
-    let command = "vote";
-    let args = msg.content.slice(prefix.length + command.length + 1);
+  // vote: (msg, prefix) => {
+  //   let command = "vote";
+  //   let args = msg.content.slice(prefix.length + command.length + 1);
 
-    msg.delete();
+  //   msg.delete();
 
-    msg.channel
-      .send(
-        new MessageEmbed()
-        .setTitle("Vote now!")
-        .setDescription(msg.content.slice(prefix.length + command.length + 1))
-      )
-      .then((sentMessage) => {
-        const emoji = ["👍", "👎"];
-        emoji.forEach((curEmoji) => {
-          sentMessage.react(curEmoji);
-        });
-      });
-  },
+  //   msg.channel
+  //     .send(
+  //       new MessageEmbed()
+  //       .setTitle("Vote now!")
+  //       .setDescription(msg.content.slice(prefix.length + command.length + 1))
+  //     )
+  //     .then((sentMessage) => {
+  //       const emoji = ["👍", "👎"];
+  //       emoji.forEach((curEmoji) => {
+  //         sentMessage.react(curEmoji);
+  //       });
+  //     });
+  // },
 
   steal: (msg, prefix) => {
     const args = msg.content.slice(prefix.length).trim().split(/ +/);

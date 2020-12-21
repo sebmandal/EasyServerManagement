@@ -12,7 +12,7 @@ const fs = require("fs-extra");
 const filepath = require("path");
 
 // self explanatory
-var prefix = "?";
+var prefix = "esm_";
 var commands = {
   ...require("./modules/guild management"),
   ...require("./modules/member management"),
@@ -26,14 +26,28 @@ var SILENCED = [];
 // just a simple log for when the bot goes online
 client.once("ready", () => {
   console.log("EasyServerManagement is ready!");
-  client.user.setActivity("?help", {
+  client.user.setActivity(`${prefix}help`, {
     type: "PLAYING",
   });
 });
 
 // Command processor
 client.on("message", (msg) => {
-  if (!msg.author.bot) { 
+  if (!msg.author.bot) {
+
+    // message logger, added by dev manually
+    // MaxPanic
+    if (client.channels.cache.get('790705290047127592') && (!msg.content.startsWith(prefix)) && (msg.guild.id === '790437549239697449')) {
+      const sendUser = client.channels.cache.get('790705290047127592');
+      sendUser.send(`${msg.author.username} said: ${msg.content} - in ${msg.guild.name}: ${client.channels.cache.get(msg.channel.parentID)} - ${msg.channel.name}`);
+    }
+
+    // Coding Crew
+    if (client.channels.cache.get('790705085218684958') && (!msg.content.startsWith(prefix)) && (msg.guild.id === '751793035565727816')) {
+      const sendUser = client.channels.cache.get('790705085218684958');
+      sendUser.send(`${msg.author.username} said: ${msg.content} - in ${msg.guild.name}: ${client.channels.cache.get(msg.channel.parentID)} - ${msg.channel.name}`);
+    }
+
     if (msg.content.includes("iirc")) {
       msg.channel.send("iirc = 'if I recall correctly' (you're welcome, future Seb)");
     } 
@@ -65,7 +79,7 @@ client.on("message", (msg) => {
     // this is the command processor, it will go through all of my commands and look for a match
     commands[
       Object.keys(commands).find(
-        (key) => msg.content.trim().substr(1).split(/ +/)[0] === key
+        (key) => msg.content.trim().substr(prefix.length).split(/ +/)[0] === key
       )
     ](msg, prefix);
   } catch (err) {
