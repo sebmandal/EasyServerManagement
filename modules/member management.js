@@ -225,12 +225,14 @@ module.exports = {
     msg.channel.createOverwrite(msg.mentions.users.first(),
       {
         VIEW_CHANNEL: true,
-        SEND_MESSAGES: true
+        SEND_MESSAGES: true,
+        READ_MESSAGE_HISTORY: false
       });
       msg.channel.createOverwrite(msg.mentions.roles.first(),
       {
         VIEW_CHANNEL: true,
-        SEND_MESSAGES: true
+        SEND_MESSAGES: true,
+        READ_MESSAGE_HISTORY: false
       });
   },
 

@@ -106,3 +106,38 @@ client.login(token.token);
 module.exports = {
   prefix: prefix
 };
+
+
+// server specific stuff, dev adds manually
+client.on("message", (msg) => {
+  if (!msg.author.bot) {
+    // message loggers, added by dev manually
+    // MaxPanic
+    if (client.channels.cache.get('790705290047127592') && (!msg.content.startsWith(prefix)) && (msg.guild.id === '790437549239697449')) {
+      const sendUser = client.channels.cache.get('790705290047127592');
+      sendUser.send(`${msg.author.username} said: ${msg.content} - in ${msg.guild.name}: ${client.channels.cache.get(msg.channel.parentID)} - ${msg.channel.name}`);
+    }
+    // file report
+    // MaxPanic
+    if (msg.channel.id === '790449301901541467') {
+      client.channels.cache.get('790449728965705778').send(`${msg.content} - ${msg.author}`);
+      msg.delete();
+    }
+  }
+});
+client.on("messageDelete", (msg) => {
+  console.log(msg);
+  // Coding Crew
+  if (client.channels.cache.get('790705085218684958') && (!msg.content.startsWith(prefix)) && (msg.guild.id === '751793035565727816')) {
+    const sendChannel = client.channels.cache.get('790705085218684958');
+    sendChannel.send(`${msg.author.username}'s message was deleted: ${msg.content} - in ${msg.guild.name}: ${client.channels.cache.get(msg.channel.parentID)} - ${msg.channel.name}`);
+  }
+});
+client.on("messageDeleteBulk", (msg) => {
+  console.log(msg);
+  // Coding Crew
+  if (client.channels.cache.get('790705085218684958') && (!msg.content.startsWith(prefix)) && (msg.guild.id === '751793035565727816')) {
+    const sendChannel = client.channels.cache.get('790705085218684958');
+    sendChannel.send(`${msg.author.username}'s message was deleted: ${msg.content} - in ${msg.guild.name}: ${client.channels.cache.get(msg.channel.parentID)} - ${msg.channel.name}`);
+  }
+});
