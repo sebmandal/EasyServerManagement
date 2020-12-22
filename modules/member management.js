@@ -220,4 +220,34 @@ module.exports = {
       .then(msg.channel.send("Deleted."))
       .catch(console.error);
   },
+
+  add: (msg, prefix) => {
+    msg.channel.createOverwrite(msg.mentions.users.first(),
+      {
+        VIEW_CHANNEL: true,
+        SEND_MESSAGES: true
+      });
+      msg.channel.createOverwrite(msg.mentions.roles.first(),
+      {
+        VIEW_CHANNEL: true,
+        SEND_MESSAGES: true
+      });
+  },
+
+  remove: (msg, prefix) => {
+    // for everyone?
+    if (msg.mentions.everyone) {
+      msg.channel.permissionOverwrites.delete()
+    }
+    // for people
+    person = msg.mentions.users.first();
+    if (person) {
+      msg.channel.permissionOverwrites.get(person.id).delete()
+    }
+    role = msg.mentions.roles.first();
+    // for roles
+    if (role) {
+      msg.channel.permissionOverwrites.get(role.id).delete()
+    }
+  },
 };
