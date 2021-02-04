@@ -1,13 +1,57 @@
-/*jshint esversion: 9 */
-const {
-  MessageEmbed,
-  Client
-} = require("discord.js");
-
-const client = new Client();
-
 module.exports = {
-  mute: (msg, prefix) => {
+  role: (client, msg, prefix, args) => {
+    msg.guild.roles.create({
+      data: {
+        name: args[1],
+        color: args[2],
+        permissions: parseInt(args[3]),
+        mentionable: args[4] == 'true',
+      }
+    });
+    msg.reply('Created role @' + args[1]);
+  },
+  deleterole: (client, msg, prefix, args) => {
+    const role = msg.mentions.roles.first();
+		if (role) {
+			role.delete();
+			msg.channel.send(`Deleted role ${role.name}.`);
+		} else {
+			msg.channel.send("You didn't enter a role!");
+		}
+  },
+  delete: (client, msg, prefix, args) => {
+    args = msg.content.slice(prefix.length).trim().split(/ +/);
+		args.shift(); // remove command from message to just get args
+    msg.guild.channels
+			.resolve(args[0])
+			.delete()
+			.then(msg.channel.send("Deleted."));
+  },
+  purge: (client, msg, prefix, args) => {
+    if (parseInt(args[1]) < 100 && parseInt(args[1]) > 0) {
+      msg.channel.bulkDelete(parseInt(args[1]) + 1);
+    } else {
+      msg.channel.send('That value is either too high or too low. Choose a value between 1 and 99.');
+    }
+  },
+  steal: (client, msg, prefix, args) => {
+    if (args.length > 5)
+      return msg.reply("slow down, buckaroo! Only do 5 emoji at a time.");
+
+    // iterate through the added emoji (must be seperated with a space in message)
+      msg.guild.emojis
+      .create(
+        `https://cdn.discordapp.com/emojis/${args[1]
+            .split(":")[2]
+            .replace(">", "")}${
+            args[0].startsWith("<a:") ? ".gif?v=1" : ".png?v=1"
+          }`,
+        args[2]
+      )
+      .then((emoji) => msg.reply(`added ${emoji}`))
+      .catch((err) => log.warn(err));
+  },
+  mute: (client, msg, prefix, args) => {
     const user = msg.mentions.users.first();
 
     // If we have a user mentioned
@@ -51,8 +95,7 @@ module.exports = {
       msg.reply("You didn't mention a user or the mentioned user is invalid!");
     }
   },
-
-  deaf: (msg, prefix) => {
+  deaf: (client, msg, prefix, args) => {
     const user = msg.mentions.users.first();
 
     if (user) {
@@ -85,8 +128,7 @@ module.exports = {
       msg.reply("You didn't mention a user or the mentioned user is invalid!");
     }
   },
-
-  kick: (msg, prefix) => {
+  kick: (client, msg, prefix, args) => {
     const user = msg.mentions.users.first();
 
     if (user) {
@@ -109,8 +151,7 @@ module.exports = {
       msg.reply("You didn't mention a user or the mentioned user is invalid!");
     }
   },
-
-  ban: (msg, prefix) => {
+  ban: (client, msg, prefix, args) => {
     const user = msg.mentions.users.first();
 
     // If we have a user mentioned
@@ -148,95 +189,19 @@ module.exports = {
       msg.reply("You didn't mention a user or the mentioned user is invalid!");
     }
   },
-
-  createrole: (msg, prefix) => {
-    var args = msg.content.slice(prefix.length + 10 + 1).split("; ");
-
-    if (args.length != 4) {
-      return;
-    } else {
-      msg.guild.roles.create({
-        data: {
-          name: args[0],
-          color: args[1],
-          permissions: /\d/g.test(args[2]) ? parseInt(args[2]) : args[2],
-          mentionable: args[3] == "true",
-        },
-      });
-      msg.reply("Created role " + args[0]);
-    }
-  },
-
-  deleterole: (msg, prefix) => {
-    const role = msg.mentions.roles.first();
-
-    if (role) {
-      role.delete();
-      msg.channel.send(`Deleted role ${role.name}.`);
-    } else {
-      msg.channel.send("You didn't enter a role!");
-    }
-  },
-
-  create: (msg, prefix) => {
-    let command = "create";
-    let args = msg.content
-      .slice(prefix.length + command.length + 1)
-      .split(/; +/);
-    console.log(args);
-
-    if (args.length > 3 || args.length < 2) {
-      return;
-    } else if (args.length === 2) {
-      msg.guild.channels
-        .create(args[0], {
-          type: args[1],
-        })
-        .then((channel) => {
-          msg.channel.send("Category/channel creation executed successfully.");
-        })
-        .catch(console.error);
-    } else {
-      // Create a new text channel
-      msg.guild.channels
-        .create(args[0], {
-          type: args[1],
-        })
-        .then((channel) => {
-          channel.setParent(args[2]);
-          msg.channel.send("Category/channel creation executed successfully.");
-        })
-        .catch(console.error);
-    }
-  },
-
-  delete: (msg, prefix) => {
-    let args = msg.content.slice(prefix.length).trim().split(/ +/);
-    args.shift(); // remove command from message to just get args
-
-    msg.guild.channels
-      .resolve(args[0])
-      .delete()
-      .then(msg.channel.send("Deleted."))
-      .catch(console.error);
-  },
-
-  add: (msg, prefix) => {
+  add: (client, msg, prefix, args) => {
     msg.channel.createOverwrite(msg.mentions.users.first(),
-      {
-        VIEW_CHANNEL: true,
-        SEND_MESSAGES: true,
-        READ_MESSAGE_HISTORY: false
-      });
-      msg.channel.createOverwrite(msg.mentions.roles.first(),
-      {
-        VIEW_CHANNEL: true,
-        SEND_MESSAGES: true,
-        READ_MESSAGE_HISTORY: false
-      });
+    {
+      VIEW_CHANNEL: true,
+      SEND_MESSAGES: true
+    });
+    msg.channel.createOverwrite(msg.mentions.roles.first(),
+    {
+      VIEW_CHANNEL: true,
+      SEND_MESSAGES: true
+    });
   },
-
-  remove: (msg, prefix) => {
+  remove: (client, msg, prefix, args) => {
     // for everyone?
     if (msg.mentions.everyone) {
       msg.channel.permissionOverwrites.delete()

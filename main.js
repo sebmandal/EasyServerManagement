@@ -1,27 +1,14 @@
-/*jshint esversion: 9 */
-
-const {
-  Client,
-  MessageEmbed
-} = require("discord.js");
-
+const { Client } = require("discord.js");
 const client = new Client();
 
-// To use my json parser. I have my token stored in auth.json, so it would be harder (if it's even possible) to crack my token
-const fs = require("fs-extra");
-const filepath = require("path");
-
-// self explanatory
-var prefix = "esm_";
+// prefix and importing commands
+const fs = require('fs-extra')
+var prefix = fs.readJsonSync('./prefix.json').prefix;
 var commands = {
-  ...require("./modules/guild management"),
-  ...require("./modules/member management"),
+  ...require("./modules/guild"),
   ...require("./modules/info"),
-  ...require("./modules/fun")
+  ...require("./modules/restricted")
 };
-
-// silenced channels
-var SILENCED = [];
 
 // just a simple log for when the bot goes online
 client.once("ready", () => {
@@ -33,84 +20,26 @@ client.once("ready", () => {
 
 // Command processor
 client.on("message", (msg) => {
-
-  const args = msg.content.slice(prefix.length).split(/ +/);
-  const command = args.shift().toLowerCase();
-
-  if (
-    // if the person is a bot, the command doesn't start with a prefix, the person doesn't have administrator right or it's a dm, it should return.
-    !msg.content.startsWith(prefix) ||
-    msg.channel.type === "dm" ||
-    msg.author.bot ||
-    !msg.member.hasPermission("ADMINISTRATOR")
-  ) {
-    if (msg.content.startsWith(prefix)) {
-      if (command != "help") {
-        if (!msg.member.hasPermission("ADMINISTRATOR")) {
-          msg.reply("Unable to send command. You are not an administrator.");
-          return;
+  if (msg.content.startsWith(prefix)) {
+    if (!msg.member.hasPermission('ADMINISTRATOR')) {
+      msg.reply("Nice try bruh");
+    } else {
+      if (!msg.author.bot && msg.channel.type != 'dm' || msg.author.id === '399596706402009100') {
+        const args = msg.content.slice(prefix.length).split(' ');
+        try {
+          // this is the command processor, it will go through all of my commands and look for a match
+          commands[
+            args[0]
+          ](client, msg, prefix, args);
+        } catch (err) {
+          // msg.channel.send('That command is either not supported yet or it does not exist. `command[args[n]]` is fine');
+          msg.channel.send('`'+err+'`'+'\n`contact @sebmandal#1337 for assistance.`');
         }
       }
-    } else {
-      return;
-    }
-  }
-
-  try {
-    // this is the command processor, it will go through all of my commands and look for a match
-    commands[
-      Object.keys(commands).find(
-        (key) => msg.content.trim().substr(prefix.length).split(/ +/)[0] === key
-      )
-    ](msg, prefix);
-  } catch (err) {
-    return; // this is here temporarily
-    // !(err instanceof TypeError) && log(err);
-  }
-});
-
-// Joining the server
-token = {
-  ...require('./token')
-}
-
-client.login(token.token);
-
-module.exports = {
-  prefix: prefix
-};
-
-
-// server specific stuff, dev adds manually
-client.on("message", (msg) => {
-  if (!msg.author.bot) {
-    // message loggers, added by dev manually
-    // MaxPanic
-    if (client.channels.cache.get('790705290047127592') && (!msg.content.startsWith(prefix)) && (msg.guild.id === '790437549239697449')) {
-      const sendUser = client.channels.cache.get('790705290047127592');
-      sendUser.send(`${msg.author.username} said: ${msg.content} - in ${msg.guild.name}: ${client.channels.cache.get(msg.channel.parentID)} - ${msg.channel.name}`);
-    }
-    // file report
-    // MaxPanic
-    if (msg.channel.id === '790449301901541467') {
-      client.channels.cache.get('790449728965705778').send(`${msg.content} - ${msg.author}`);
-      msg.delete();
     }
   }
 });
-client.on("messageDelete", (msg) => {
-  console.log(msg);
-  // Coding Crew
-  if (client.channels.cache.get('790705085218684958') && (!msg.content.startsWith(prefix)) && (msg.guild.id === '751793035565727816')) {
-    const sendChannel = client.channels.cache.get('790705085218684958');
-    sendChannel.send(`${msg.author.username}'s message was deleted: ${msg.content} - in ${msg.guild.name}: ${client.channels.cache.get(msg.channel.parentID)} - ${msg.channel.name}`);
-  }
-});
-client.on("messageDeleteBulk", (msg) => {
-  console.log(msg);
-  // Coding Crew
-  if (client.channels.cache.get('790705085218684958') && (!msg.content.startsWith(prefix)) && (msg.guild.id === '751793035565727816')) {
-    const sendChannel = client.channels.cache.get('790705085218684958');
-    sendChannel.send(`${msg.author.username}'s message was deleted: ${msg.content} - in ${msg.guild.name}: ${client.channels.cache.get(msg.channel.parentID)} - ${msg.channel.name}`);
-  }
-});
+
+// Connecting
+tokenFile = {...require('./token')};
+client.login(tokenFile.token);

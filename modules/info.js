@@ -1,30 +1,33 @@
-/*jshint esversion: 9 */
-const {
-  MessageEmbed,
-  Client
-} = require("discord.js");
+var commandParams = {
+  ...require("./guildParams"),
+  ...require("./infoParams"),
+  ...require("./restrictedParams"),
+};
 
-const client = new Client();
+var commands = {
+  ...require("./guild"),
+  ...require("./info"),
+  ...require("./restricted"),
+};
+
+const { MessageEmbed } = require("discord.js");
 
 module.exports = {
-  source: (msg, prefix) => {
-    const source_embed = new MessageEmbed()
-      .setTitle("Source code")
-      .setURL("https://github.com/sebastianmandal/EasyServerManagement")
-      .setColor(0xff0000);
-    msg.channel.send(source_embed);
+  list: (client, msg, prefix, args) => {
+    msg.channel.send('`'+Object.keys(commands).join('\n')+'`');
   },
-
-  help: (msg, prefix) => {
-
-    var commands = {
-      ...require("./guild management"),
-      ...require("./member management"),
-      ...require("./info"),
-      ...require("./fun")
-    };
-    // Sends embed containing Github, personal info, commands for bot, example, prefix, etc. in chat.
-    const help_embed = new MessageEmbed()
+  help: (client, msg, prefix, args) => {
+    if (args.length > 1) {
+      try {
+        commandParams[args[1]](client, msg, prefix, args);
+      } catch {
+        msg.channel.send('Unfortunately that command is not supported for the help command or it does not exist.');
+      }
+    } else {
+      // msg.channel.send(Object.keys(commandParams));
+      // msg.channel.send(Object.keys(commands));
+      
+      const help_embed = new MessageEmbed()
       .setColor("#0099ff")
       .setTitle("Sebastian Mandal > EasyServerManagement")
       .setDescription(
@@ -54,6 +57,7 @@ module.exports = {
         'Discord bot "EasyServerManagement", made by Sebastian Mandal.'
       );
 
-    msg.channel.send(help_embed);
+      msg.reply(help_embed);
+    }
   }
 };
