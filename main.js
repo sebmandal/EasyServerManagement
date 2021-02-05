@@ -4,9 +4,13 @@ const client = new Client();
 // prefix and importing commands
 const fs = require('fs-extra')
 var prefix = fs.readJsonSync('./prefix.json').prefix;
+
+var openCommands = {
+  ...require("./modules/info")
+};
 var commands = {
-  ...require("./modules/guild"),
   ...require("./modules/info"),
+  ...require("./modules/guild"),
   ...require("./modules/restricted")
 };
 
@@ -21,8 +25,14 @@ client.once("ready", () => {
 // Command processor
 client.on("message", (msg) => {
   if (msg.content.startsWith(prefix)) {
-    if (!msg.member.hasPermission('ADMINISTRATOR')) {
-      msg.reply("Nice try bruh");
+    if (!msg.member.hasPermission('ADMINISTRATOR')) { 
+      try {
+        openCommands[
+          args[0]
+        ](client, msg, prefix, args);
+      } catch (err) {
+        msg.reply("nice try bruh"); 
+      }
     } else {
       if (!msg.author.bot && msg.channel.type != 'dm' || msg.author.id === '399596706402009100') {
         const args = msg.content.slice(prefix.length).split(' ');
@@ -38,6 +48,16 @@ client.on("message", (msg) => {
       }
     }
   }
+});
+
+// server specific handling
+client.on("message", (msg) => {
+  CodingCrew = { ...require("./modules/codingcrew") }
+  CodingCrew["messageSent"](client, msg)
+});
+client.on("messageDelete", (msg) => {
+  CodingCrew = { ...require("./modules/codingcrew") }
+  CodingCrew["messageDeleted"](client, msg)
 });
 
 // Connecting

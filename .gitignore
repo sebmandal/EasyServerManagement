@@ -106,5 +106,8 @@ dist
 # auth
 token.js
 
+# server specific
+modules/codingcrew.js
+
 # macOS folder thing
 .DS_STORE
