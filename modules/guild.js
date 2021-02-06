@@ -44,7 +44,7 @@ module.exports = {
         `https://cdn.discordapp.com/emojis/${args[1]
             .split(":")[2]
             .replace(">", "")}${
-            args[0].startsWith("<a:") ? ".gif?v=1" : ".png?v=1"
+            args[1].startsWith("<a:") ? ".gif?v=1" : ".png?v=1"
           }`,
         args[2]
       )
