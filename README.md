@@ -3,4 +3,4 @@ Discord bot for easier server management. All done in command line (messages) in
 
 ## Developers
 - Main developer: me
-- Received help from: **[tycrek](https://github.com/tycrek)**
+- Thanks to @tycrek for helping me in the beginning though :)
