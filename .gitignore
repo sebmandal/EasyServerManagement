@@ -111,3 +111,6 @@ modules/codingcrew.js
 
 # macOS folder thing
 .DS_STORE
+
+# strikes
+strikes.json

@@ -15,6 +15,9 @@ module.exports = {
     msg.channel.send('`1: emote (:emoteName:) \n2: name in this server (with no colons)`')
   },
   add: (client, msg, prefix, args) => {
-    msg.channel.send('`1: Person (@tag)\n2: Permissions (dict: {VIEW_CHANNEL:true})`');
-  }
+    msg.channel.send('`1: Person (@tag)`');
+  },
+  remove: (client, msg, prefix, args) => {
+    msg.channel.send('`1: Person (@tag)`');
+  },
 }

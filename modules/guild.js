@@ -1,3 +1,5 @@
+const fs = require('fs-extra');
+
 module.exports = {
   role: (client, msg, prefix, args) => {
     msg.guild.roles.create({
@@ -12,20 +14,20 @@ module.exports = {
   },
   deleterole: (client, msg, prefix, args) => {
     const role = msg.mentions.roles.first();
-		if (role) {
-			role.delete();
-			msg.channel.send(`Deleted role ${role.name}.`);
-		} else {
-			msg.channel.send("You didn't enter a role!");
-		}
+    if (role) {
+      role.delete();
+      msg.channel.send(`Deleted role ${role.name}.`);
+    } else {
+      msg.channel.send("You didn't enter a role!");
+    }
   },
   delete: (client, msg, prefix, args) => {
     args = msg.content.slice(prefix.length).trim().split(/ +/);
-		args.shift(); // remove command from message to just get args
+    args.shift(); // remove command from message to just get args
     msg.guild.channels
-			.resolve(args[0])
-			.delete()
-			.then(msg.channel.send("Deleted."));
+      .resolve(args[0])
+      .delete()
+      .then(msg.channel.send("Deleted."));
   },
   purge: (client, msg, prefix, args) => {
     if (parseInt(args[1]) < 100 && parseInt(args[1]) > 0) {
@@ -39,13 +41,12 @@ module.exports = {
       return msg.reply("slow down, buckaroo! Only do 5 emoji at a time.");
 
     // iterate through the added emoji (must be seperated with a space in message)
-      msg.guild.emojis
+    msg.guild.emojis
       .create(
         `https://cdn.discordapp.com/emojis/${args[1]
-            .split(":")[2]
-            .replace(">", "")}${
-            args[1].startsWith("<a:") ? ".gif?v=1" : ".png?v=1"
-          }`,
+          .split(":")[2]
+          .replace(">", "")}${args[1].startsWith("<a:") ? ".gif?v=1" : ".png?v=1"
+        }`,
         args[2]
       )
       .then((emoji) => msg.reply(`added ${emoji}`))
@@ -72,8 +73,8 @@ module.exports = {
             // We let the message author know we were able to mute the person
             msg.reply(
               member.voice.mute ?
-              `Successfully muted @${user.username}.` :
-              `Successfully unmuted @${user.username}.`
+                `Successfully muted @${user.username}.` :
+                `Successfully unmuted @${user.username}.`
             );
           })
           .catch((err) => {
@@ -110,8 +111,8 @@ module.exports = {
           .then(() => {
             msg.reply(
               member.voice.mute ?
-              `Successfully deafened @${user.username}.` :
-              `Successfully undeafened @${user.username}.`
+                `Successfully deafened @${user.username}.` :
+                `Successfully undeafened @${user.username}.`
             );
             console.log("Deafened member");
           })
@@ -190,29 +191,29 @@ module.exports = {
     }
   },
   add: (client, msg, prefix, args) => {
-    msg.channel.createOverwrite(msg.mentions.users.first(),
-    {
-      VIEW_CHANNEL: true,
-      SEND_MESSAGES: true
-    });
-    msg.channel.createOverwrite(msg.mentions.roles.first(),
-    {
-      VIEW_CHANNEL: true,
-      SEND_MESSAGES: true
-    });
+    // for people
+    person = msg.mentions.users.first() || msg.guild.members.resolve(args[1]);
+    msg.channel.createOverwrite(person,
+      {
+        VIEW_CHANNEL: true,
+        SEND_MESSAGES: true
+      });
+    // for roles
+    role = msg.mentions.roles.first() || msg.guild.roles.resolve(args[1]);
+    msg.channel.createOverwrite(role,
+      {
+        VIEW_CHANNEL: true,
+        SEND_MESSAGES: true
+      });
   },
   remove: (client, msg, prefix, args) => {
-    // for everyone?
-    if (msg.mentions.everyone) {
-      msg.channel.permissionOverwrites.delete()
-    }
     // for people
-    person = msg.mentions.users.first();
+    person = msg.mentions.users.first() || msg.guild.members.resolve(args[1]);
     if (person) {
       msg.channel.permissionOverwrites.get(person.id).delete()
     }
-    role = msg.mentions.roles.first();
     // for roles
+    role = msg.mentions.roles.first() || msg.guild.roles.resolve(args[1]);
     if (role) {
       msg.channel.permissionOverwrites.get(role.id).delete()
     }
