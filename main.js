@@ -1,4 +1,6 @@
-const { Client } = require("discord.js");
+const {
+  Client
+} = require("discord.js");
 const client = new Client();
 
 // prefix and importing commands
@@ -7,10 +9,12 @@ const schedule = require('node-schedule');
 var prefix = fs.readJsonSync('./prefix.json').prefix;
 
 var openCommands = {
+  ...require("./modules/help"),
   ...require("./modules/open")
 };
 var commands = {
   ...require("./modules/open"),
+  ...require("./modules/help"),
   ...require("./modules/guild"),
   ...require("./modules/restricted")
 };
@@ -21,7 +25,7 @@ client.once("ready", () => {
   client.user.setActivity(`${prefix}help`, {
     type: "PLAYING",
   });
-  client.guilds.resolve("809384279171661894").channels.resolve("813823581950836746").send("Bot restarted.");
+  client.guilds.resolve("809384279171661894").channels.resolve("813823581950836746").send("Bot restarted."); // sending message to ESM Community server
 });
 
 // Command processor
@@ -33,7 +37,7 @@ client.on("message", (msg) => {
         openCommands[
           args[0]
         ](client, msg, prefix, args);
-      } catch (err) { }
+      } catch (err) {}
     } else {
       if (!msg.author.bot && msg.channel.type != 'dm' || msg.author.id === '399596706402009100') {
         try {
@@ -43,7 +47,8 @@ client.on("message", (msg) => {
           ](client, msg, prefix, args);
         } catch (err) {
           // msg.channel.send('That command is either not supported yet or it does not exist. `command[args[n]]` is fine');
-          msg.channel.send('`' + err + '`' + '\n`contact @sebmandal#1337 for assistance.`');
+          // msg.channel.send('`' + err + '`' + '\n`contact @seb#1337 for assistance.`');
+          err == 'TypeError: commands[args[0]] is not a function' ? msg.channel.send('That is not a valid command.') : msg.reply('Error returned: \n' + err);
         }
       }
     }
@@ -70,5 +75,7 @@ client.once("ready", () => {
 });
 
 // Connecting
-tokenFile = { ...require('./token') };
+tokenFile = {
+  ...require('./token')
+};
 client.login(tokenFile.token);

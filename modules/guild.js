@@ -218,4 +218,7 @@ module.exports = {
       msg.channel.permissionOverwrites.get(role.id).delete()
     }
   },
+  // roleReaction: (client, msg, prefix, args) {
+    
+  // }
 };

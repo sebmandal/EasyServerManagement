@@ -1,0 +1,15 @@
+{
+  "messages": [
+    {
+      "guildId": "",
+      "channelId": "",
+      "reactions": [
+        {
+          "roleId": "",
+          "reactionId": ""
+        }
+      ],
+      "messageId": ""
+    }
+  ]
+}
