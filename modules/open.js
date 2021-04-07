@@ -5,7 +5,7 @@ module.exports = {
     return msg.channel.send('https://davecode.me/other/' + args[1] + '.mp4')
   },
   github: (client, msg, prefix, args) => {
-    return msg.channel.send(`https://github.com/${args[0]}/${args[1]}`);
+    return msg.channel.send(`https://github.com/${args[1]}/${args[2]}`);
   },
   google: (client, msg, prefix, args) => {
     return msg.channel.send(`https://www.google.com/search?q=${(args.slice(1).join('%20'))}`);

@@ -4,7 +4,8 @@
   "description": "Easy Server Management bot, command line control of permissions, roles, etc.",
   "main": "main.js",
   "scripts": {
-    "app": "nodemon main.js"
+    "start": "node .",
+    "app": "nodemon ."
   },
   "author": "Sebastian Mandal",
   "license": "ISC",

@@ -30,7 +30,7 @@ module.exports = {
       .then(msg.channel.send("Deleted."));
   },
   purge: (client, msg, prefix, args) => {
-    if (parseInt(args[1]) < 100 && parseInt(args[1]) > 0) {
+    if (parseInt(args[1]) < 101 && parseInt(args[1]) > 0) {
       msg.channel.bulkDelete(parseInt(args[1]) + 1);
     } else {
       msg.channel.send('That value is either too high or too low. Choose a value between 1 and 99.');
@@ -136,6 +136,8 @@ module.exports = {
       const member = msg.guild.member(user);
 
       if (member) {
+        // sending a DM to the victim
+        msg.mentions.users.first().send('You have been kicked from ' + msg.guild.name + 'for ' + args.slice(2));
         member
           .kick()
           .then(() => {
@@ -157,6 +159,9 @@ module.exports = {
 
     // If we have a user mentioned
     if (user) {
+      // sending a DM to the victim
+      msg.mentions.users.first().send('You have been banned from ' + msg.guild.name + 'for ' + args.slice(2));
+
       // Now we get the member from the user
       const member = msg.guild.member(user);
 
@@ -170,6 +175,9 @@ module.exports = {
         member
           .ban()
           .then(() => {
+            // sending a DM to the victim
+            msg.guild.members.resolve(msg.mentions.users.first()).send('You have been banned from ' + msg.guild.name + 'for ' + args.slice(2));
+            
             // We let the message author know we were able to ban the person
             msg.reply(`Successfully banned @${user.username}.`);
           })
@@ -220,5 +228,26 @@ module.exports = {
   },
   // roleReaction: (client, msg, prefix, args) {
     
+  // },
+  ticket: (client, msg, prefix, args) => {
+    var db = fs.readJSONSync('./guilds.json');
+    db.map(guild => {
+      if (guild.id === msg.guild.id) {
+        if (guild.tickets) {
+          if (!guild.tickets.includes(msg.channel.id)) {
+            guild.tickets.push(msg.channel.id);
+          } else {
+            return msg.channel.send('There is already a ticket going on in this channel.');
+          }
+        } else {
+          guild.tickets = [msg.channel.id];
+        }
+      }
+    });
+    fs.writeJSONSync('./guilds.json', db);
+    return msg.channel.send(`Ticket ${msg.channel.id} created. Send ` + '`🔒`' + `to close this ticket.`);
+  },
+  // giverole: (client, msg, prefix, args) => {
+  //   // to give a person a role
   // }
 };

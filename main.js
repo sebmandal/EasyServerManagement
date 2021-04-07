@@ -3,6 +3,10 @@ const {
 } = require("discord.js");
 const client = new Client();
 
+function sleep(ms) {
+   return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 // prefix and importing commands
 const fs = require('fs-extra')
 const schedule = require('node-schedule');
@@ -29,7 +33,39 @@ client.once("ready", () => {
 });
 
 // Command processor
-client.on("message", (msg) => {
+client.on("message", async msg => {
+  if (msg.content == '🔒') {
+    if (msg.member.hasPermission('ADMINISTRATOR')) {
+      db = fs.readJSONSync('./guilds.json');
+      db.map(async guild => {
+        if (guild.id == msg.guild.id && guild.tickets) {
+          if (guild.tickets.includes(msg.channel.id)) {
+            ticket = guild.tickets.indexOf(msg.channel.id);
+            guild.tickets.splice(ticket, 1);
+            fs.writeJSONSync('./guilds.json', db);
+            while (msg.channel.messages.cache) {
+              if (msg.channel.messages.cache.first()) {
+                if (!msg.channel.messages.cache.first().deleted) {
+                  commands['purge'](client, msg, prefix, ['', '99']);
+                  await sleep(1000);
+                } else {
+                  newmsg = msg.channel.send('Closed ticket.')
+                    .then(await sleep(3000))
+                    .then((newMessage) => newMessage.delete());
+                  break;
+                }
+              } else {
+                newmsg = msg.channel.send('Closed ticket.')
+                  .then(await sleep(3000))
+                  .then((newMessage) => newMessage.delete());
+                break;
+              }
+            }
+          }
+        }
+      });
+    }
+  }
   if (msg.content.startsWith(prefix)) {
     const args = msg.content.slice(prefix.length).split(' ');
     if (!msg.member.hasPermission('ADMINISTRATOR')) {
@@ -37,7 +73,7 @@ client.on("message", (msg) => {
         openCommands[
           args[0]
         ](client, msg, prefix, args);
-      } catch (err) {}
+      } catch (err) { }
     } else {
       if (!msg.author.bot && msg.channel.type != 'dm' || msg.author.id === '399596706402009100') {
         try {
@@ -48,7 +84,7 @@ client.on("message", (msg) => {
         } catch (err) {
           // msg.channel.send('That command is either not supported yet or it does not exist. `command[args[n]]` is fine');
           // msg.channel.send('`' + err + '`' + '\n`contact @seb#1337 for assistance.`');
-          err == 'TypeError: commands[args[0]] is not a function' ? msg.channel.send('That is not a valid command.') : msg.reply('Error returned: \n' + err);
+          err == 'TypeError: commands[args[0]] is not a function' ? msg.channel.send('That is not a valid command.') : msg.reply('Error returned: \n' + err + '\nContact @seb#1337 for support.');
         }
       }
     }
